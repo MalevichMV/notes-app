@@ -1,0 +1,25 @@
+.back-arrow{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 15%;
+    width: 30px;
+    cursor: pointer;
+}
+
+.task-list__task_center{
+    padding: 0 40px;
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+
+.task-list__trash-bin{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    &:hover{
+        transform: translateY(-50%) scale(1.1);
+    }
+}
