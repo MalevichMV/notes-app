@@ -61,6 +61,7 @@
 <script>
 import AppModalConfirmation from "./AppModalConfirmation.vue";
 import AppCreatingNoteModal from "./AppCreatingNoteModal.vue";
+import "../assets/style/app.scss";
 
 import {
   getAllNotes,

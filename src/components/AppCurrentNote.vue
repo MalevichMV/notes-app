@@ -29,7 +29,7 @@
         <span>{{ item.title }}</span>
         <img
           @click="openConfirmationModal(i)"
-          class="trash-bin task-list__trash-bin"
+          class="trash-bin trash-bin_for-task"
           src="../assets/img/trash-bin.svg"
           alt="trash-bin"
         />
@@ -40,6 +40,7 @@
 
 <script>
 import AppModalConfirmation from "./AppModalConfirmation.vue";
+import "../assets/style/appCurrentNote.scss";
 
 import {
   getNoteById,

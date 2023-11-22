@@ -23,7 +23,7 @@
         <li class="new-note__task" v-for="(item, i) in tasks" :key="i">
           <img
             @click="deleteTask(i)"
-            class="trash-bin task-list__trash-bin"
+            class="trash-bin trash-bin_for-task"
             src="../assets/img/trash-bin.svg"
             alt="trash-bin"
           />
@@ -43,6 +43,8 @@
 </template>
 
 <script>
+import "../assets/style/appCreatingNoteModal.scss";
+
 export default {
   props: {
     isOpen: {

@@ -15,6 +15,8 @@
 </template>
 
 <script>
+import "../assets/style/appModalConfirmation.scss";
+
 export default {
   name: "AppModalConfirmation",
   props: {
