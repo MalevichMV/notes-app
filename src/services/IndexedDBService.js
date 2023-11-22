@@ -65,26 +65,36 @@ export const getAllNotes = async () => {
   });
 };
 
-export const updateTaskCompleted = async (noteId, taskIndex, completed) => {
+export const deleteNoteById = async (noteId) => {
   const db = await openDatabase();
   return new Promise((resolve, reject) => {
     const transaction = db.transaction(["notes"], "readwrite");
     const notesStore = transaction.objectStore("notes");
 
-    const request = notesStore.get(noteId);
+    const request = notesStore.delete(noteId);
 
-    request.onsuccess = (event) => {
-      const note = event.target.result;
+    request.onsuccess = () => {
+      resolve();
+    };
+
+    request.onerror = (event) => {
+      reject(event.target.error);
+    };
+  });
+};
+
+export const getNoteById = async (noteId) => {
+  const db = await openDatabase();
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(["notes"], "readonly");
+    const notesStore = transaction.objectStore("notes");
+
+    const request = notesStore.get(Number(noteId));
+
+    request.onsuccess = () => {
+      const note = request.result;
       if (note) {
-        note.tasks[taskIndex].completed = completed;
-
-        const updateRequest = notesStore.put(note);
-        updateRequest.onsuccess = () => {
-          resolve();
-        };
-        updateRequest.onerror = (updateEvent) => {
-          reject(updateEvent.target.error);
-        };
+        resolve(note);
       } else {
         reject("Note not found");
       }
@@ -96,16 +106,29 @@ export const updateTaskCompleted = async (noteId, taskIndex, completed) => {
   });
 };
 
-export const deleteNoteById = async (noteId) => {
+export const updateTaskStatus = async (noteId, taskIndex, status) => {
   const db = await openDatabase();
   return new Promise((resolve, reject) => {
     const transaction = db.transaction(["notes"], "readwrite");
     const notesStore = transaction.objectStore("notes");
 
-    const request = notesStore.delete(noteId);
+    const request = notesStore.get(Number(noteId));
 
-    request.onsuccess = () => {
-      resolve();
+    request.onsuccess = (event) => {
+      const note = event.target.result;
+      if (note) {
+        note.tasks[taskIndex].completed = status;
+
+        const updateRequest = notesStore.put(note);
+        updateRequest.onsuccess = () => {
+          resolve();
+        };
+        updateRequest.onerror = (updateEvent) => {
+          reject(updateEvent.target.error);
+        };
+      } else {
+        reject("Note not found");
+      }
     };
 
     request.onerror = (event) => {
