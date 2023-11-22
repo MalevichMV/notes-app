@@ -3,7 +3,7 @@
     <h1>{{ note.title }}</h1>
     <img
       @click="$router.push({ name: 'StartingPage' })"
-      src="../assets/img/back-arrow.svg"
+      src="../../assets/img/back-arrow.svg"
       alt="back"
       class="back-arrow"
     />
@@ -30,7 +30,7 @@
         <img
           @click="openConfirmationModal(i)"
           class="trash-bin trash-bin_for-task"
-          src="../assets/img/trash-bin.svg"
+          src="../../assets/img/trash-bin.svg"
           alt="trash-bin"
         />
       </li>
@@ -39,14 +39,14 @@
 </template>
 
 <script>
-import AppModalConfirmation from "./AppModalConfirmation.vue";
-import "../assets/style/appCurrentNote.scss";
+import AppModalConfirmation from "../../components/AppModalConfirmation/AppModalConfirmation.vue";
+import "./appCurrentNote.scss";
 
 import {
   getNoteById,
   updateTaskStatus,
   deleteTask,
-} from "../services/IndexedDBService.js";
+} from "../../services/IndexedDBService.js";
 
 export default {
   components: {

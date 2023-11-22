@@ -51,7 +51,7 @@
       <img
         @click.stop="openConfirmationModal(note.id)"
         class="trash-bin"
-        src="../assets/img/trash-bin.svg"
+        src="../../assets/img/trash-bin.svg"
         alt="trash-bin"
       />
     </div>
@@ -59,15 +59,15 @@
 </template>
 
 <script>
-import AppModalConfirmation from "./AppModalConfirmation.vue";
-import AppCreatingNoteModal from "./AppCreatingNoteModal.vue";
-import "../assets/style/app.scss";
+import AppModalConfirmation from "../../components/AppModalConfirmation/AppModalConfirmation.vue";
+import AppCreatingNoteModal from "../../components/AppCreatingNoteModal/AppCreatingNoteModal.vue";
+import "./app.scss";
 
 import {
   getAllNotes,
   deleteNoteById,
   addNote,
-} from "../services/IndexedDBService.js";
+} from "../../services/IndexedDBService.js";
 
 export default {
   components: {

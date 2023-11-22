@@ -24,7 +24,7 @@
           <img
             @click="deleteTask(i)"
             class="trash-bin trash-bin_for-task"
-            src="../assets/img/trash-bin.svg"
+            src="../../assets/img/trash-bin.svg"
             alt="trash-bin"
           />
           <span>{{ item }}</span>
@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import "../assets/style/appCreatingNoteModal.scss";
+import "./appCreatingNoteModal.scss";
 
 export default {
   props: {
