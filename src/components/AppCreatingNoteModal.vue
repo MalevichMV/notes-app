@@ -1,24 +1,39 @@
 <template>
-  <div v-if="isOpen" class="modal">
-    <form class="new-note modal_window">
+  <div v-if="isOpen" @click="cancel" class="modal">
+    <form @click.stop class="new-note modal_window">
+      <button @click="cancel" class="new-note__close-btn">+</button>
       <h3 class="new-note__title">Создание новой заметки</h3>
-      <input type="text" class="input" placeholder="Введите название заметки" />
+      <input
+        v-model="noteName"
+        type="text"
+        class="input"
+        placeholder="Введите название заметки"
+      />
       <div class="new-note__input-wrapper">
         <input
+          v-model="taskName"
           type="text"
           class="input input_task"
           placeholder="Введите название задачи"
         />
-        <button class="default-btn">+</button>
+        <button @click="addTask" class="default-btn">+</button>
       </div>
       <hr class="new-note__separator" />
       <ul class="new-note__task-list">
-        <li>Пропылесосить</li>
-        <li>Помыть полы</li>
+        <li class="new-note__task" v-for="(item, i) in tasks" :key="i">
+          <img
+            @click="deleteTask(i)"
+            class="trash-bin task-list__trash-bin"
+            src="../assets/img/trash-bin.svg"
+            alt="trash-bin"
+          />
+          <span>{{ item }}</span>
+        </li>
       </ul>
-      <hr class="new-note__separator" />
-      <button class="default-btn">Создать заметку</button>
-      <button class="new-note__close-btn">+</button>
+      <hr v-if="tasks.length > 0" class="new-note__separator" />
+      <button @click="creating" :disabled="btnDisabled" class="default-btn">
+        Создать заметку
+      </button>
     </form>
   </div>
 </template>
@@ -29,6 +44,72 @@ export default {
     isOpen: {
       type: Boolean,
       required: true,
+    },
+  },
+  emits: {
+    creating: (payload) => {
+      if (
+        typeof payload.title === "string" &&
+        payload.title.length > 0 &&
+        payload.tasks.length > 0
+      ) {
+        return true;
+      } else {
+        console.warn("Некорректные данные для события creating!");
+        return false;
+      }
+    },
+    cancel: null,
+  },
+  mounted() {
+    document.addEventListener("keydown", this.handleKeydown);
+  },
+  beforeUnmount() {
+    document.removeEventListener("keydown", this.handleKeydown);
+  },
+  data() {
+    return {
+      noteName: "",
+      taskName: "",
+
+      tasks: [],
+    };
+  },
+  computed: {
+    btnDisabled() {
+      return this.tasks.length === 0 || this.noteName === "";
+    },
+  },
+  methods: {
+    handleKeydown(e) {
+      if (this.isOpen && e.key === "Escape") {
+        this.cancel();
+      }
+    },
+    cancel() {
+      this.$emit("cancel");
+      this.noteName = "";
+      this.taskName = "";
+      this.tasks.length = 0;
+    },
+    creating() {
+      if (this.btnDisabled) return;
+      const transformedData = {
+        title: this.noteName,
+        tasks: this.tasks.map((task) => ({
+          title: task,
+          completed: false,
+        })),
+      };
+      this.$emit("creating", transformedData);
+    },
+    addTask() {
+      if (!this.taskName) return;
+      this.tasks.push(this.taskName);
+      this.taskName = "";
+    },
+    deleteTask(index) {
+      this.tasks.splice(index, 1);
     },
   },
 };

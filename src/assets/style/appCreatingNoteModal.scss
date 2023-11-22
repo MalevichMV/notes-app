@@ -25,6 +25,13 @@
 
 .new-note__task-list{
     color: #555555;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.new-note__task{
+    position: relative;
+    padding-right: 30px;
 }
 
 .new-note__input-wrapper {
