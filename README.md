@@ -1,24 +1,14 @@
 # notes-app
 
-## Project setup
-```
-npm install
-```
+##  About
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+An application for creating notes
+You can view this site by clicking on the following link:
+[Link to the website](https://malevichmv.github.io/notes-app/)
 
-### Compiles and minifies for production
-```
-npm run build
-```
+##  How to run the project
 
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+- Make a clone of the project using the command: `git clone https://github.com/MalevichMV/notes-app.git`
+- Write the command `npm i` in the project folder to use modules
+- Write the `npm run serve` command to start server.
+- Write the `npm run build` command to build project.
