@@ -16,7 +16,7 @@
           class="input input_task"
           placeholder="Введите название задачи"
         />
-        <button @click="addTask" class="default-btn">+</button>
+        <button @click.prevent="addTask" class="default-btn">+</button>
       </div>
       <hr class="new-note__separator" />
       <ul class="new-note__task-list">
@@ -31,7 +31,11 @@
         </li>
       </ul>
       <hr v-if="tasks.length > 0" class="new-note__separator" />
-      <button @click="creating" :disabled="btnDisabled" class="default-btn">
+      <button
+        @click.prevent="creating"
+        :disabled="btnDisabled"
+        class="default-btn"
+      >
         Создать заметку
       </button>
     </form>
@@ -86,11 +90,14 @@ export default {
         this.cancel();
       }
     },
-    cancel() {
-      this.$emit("cancel");
+    clearData() {
       this.noteName = "";
       this.taskName = "";
       this.tasks.length = 0;
+    },
+    cancel() {
+      this.$emit("cancel");
+      this.clearData();
     },
     creating() {
       if (this.btnDisabled) return;
@@ -102,6 +109,7 @@ export default {
         })),
       };
       this.$emit("creating", transformedData);
+      this.clearData();
     },
     addTask() {
       if (!this.taskName) return;

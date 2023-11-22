@@ -10,7 +10,7 @@
     ></app-modal-confirmation>
     <app-creating-note-modal
       :is-open="isCreatingModalOpen"
-      @creating="addNote"
+      @creating="addCurrentNote"
       @cancel="isCreatingModalOpen = false"
     ></app-creating-note-modal>
     <button
@@ -20,7 +20,7 @@
       Создать новую заметку
     </button>
     <p v-if="notes.length === 0" class="no-notes-message">Заметок пока нет!</p>
-    <div v-for="(note, i) in notes" :key="i" class="note">
+    <div v-for="note in notes" :key="note.id" class="note">
       <h2 class="note__title">{{ note.title }}</h2>
       <ul class="task-list">
         <li
@@ -44,7 +44,7 @@
         </li>
       </ul>
       <img
-        @click="openConfirmationModal(i)"
+        @click="openConfirmationModal(note.id)"
         class="trash-bin"
         src="./assets/img/trash-bin.svg"
         alt="trash-bin"
@@ -57,6 +57,12 @@
 import AppModalConfirmation from "./components/AppModalConfirmation.vue";
 import AppCreatingNoteModal from "./components/AppCreatingNoteModal.vue";
 
+import {
+  getAllNotes,
+  deleteNoteById,
+  addNote,
+} from "./services/IndexedDBService.js";
+
 export default {
   name: "App",
   components: {
@@ -66,42 +72,20 @@ export default {
   data() {
     return {
       isConfirmationModalOpen: false,
-      confirmationIndex: null,
+      confirmationId: null,
 
       isCreatingModalOpen: false,
-      notes: [
-        {
-          title: "Прибрать дом",
-          tasks: [
-            {
-              title: "Пропылесосить",
-              completed: true,
-            },
-            {
-              title: "Помыть полы",
-              completed: false,
-            },
-            {
-              title: "Вытереть пыль",
-              completed: true,
-            },
-          ],
-        },
-        {
-          title: "Планы на день",
-          tasks: [
-            {
-              title: "Погулять с собакой",
-              completed: false,
-            },
-            {
-              title: "Приготовить поесть",
-              completed: true,
-            },
-          ],
-        },
-      ],
+      notes: [],
     };
+  },
+  created() {
+    getAllNotes()
+      .then((result) => {
+        this.notes = result;
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   },
   methods: {
     shortenedTasks(tasksArray) {
@@ -109,21 +93,40 @@ export default {
 
       return tasksArray.slice(0, 2);
     },
-    addNote(note) {
-      this.isCreatingModalOpen = false;
-      this.notes.push(note);
+    addCurrentNote(note) {
+      addNote(note)
+        .then((id) => {
+          this.isCreatingModalOpen = false;
+          note.id = id;
+          this.notes.push(note);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     },
+
     deleteNote() {
-      this.notes.splice(this.confirmationIndex, 1);
-      this.closeConfirmationModal();
+      deleteNoteById(this.confirmationId)
+        .then(() => {
+          const indexToRemove = this.notes.findIndex(
+            (obj) => obj.id === this.confirmationId
+          );
+          if (indexToRemove !== -1) {
+            this.notes.splice(indexToRemove, 1);
+          }
+          this.closeConfirmationModal();
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     },
-    openConfirmationModal(confirmationIndex) {
+    openConfirmationModal(confirmationId) {
       this.isConfirmationModalOpen = true;
-      this.confirmationIndex = confirmationIndex;
+      this.confirmationId = confirmationId;
     },
     closeConfirmationModal() {
       this.isConfirmationModalOpen = false;
-      this.confirmationIndex = null;
+      this.confirmationId = null;
     },
   },
 };

@@ -29,6 +29,10 @@ main {
     border: 1px solid #dddddd;
     border-radius: 5px;
     background-color: #ffffff;
+    transition: box-shadow .2s linear;
+    &:hover{
+        box-shadow: 0 0 20px #42b983;
+    }
 }
 
 .note__title {
