@@ -9,6 +9,11 @@
     />
   </header>
   <main>
+    <app-modal-confirmation
+      :is-open="isConfirmationModalOpen"
+      @confirm="deleteSelectedTask"
+      @cancel="closeConfirmationModal"
+    ></app-modal-confirmation>
     <ul class="task-list">
       <li
         v-for="(item, i) in note.tasks"
@@ -23,6 +28,7 @@
         />
         <span>{{ item.title }}</span>
         <img
+          @click="openConfirmationModal(i)"
           class="trash-bin task-list__trash-bin"
           src="../assets/img/trash-bin.svg"
           alt="trash-bin"
@@ -33,11 +39,23 @@
 </template>
 
 <script>
-import { getNoteById, updateTaskStatus } from "../services/IndexedDBService.js";
+import AppModalConfirmation from "./AppModalConfirmation.vue";
+
+import {
+  getNoteById,
+  updateTaskStatus,
+  deleteTask,
+} from "../services/IndexedDBService.js";
 
 export default {
+  components: {
+    AppModalConfirmation,
+  },
   data() {
     return {
+      isConfirmationModalOpen: false,
+      confirmationIndex: null,
+
       note: {},
     };
   },
@@ -64,6 +82,24 @@ export default {
         .catch((error) => {
           console.error(error);
         });
+    },
+    deleteSelectedTask() {
+      deleteTask(this.$route.params.id, this.confirmationIndex)
+        .then(() => {
+          this.note.tasks.splice(this.confirmationIndex, 1);
+          this.closeConfirmationModal();
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+    openConfirmationModal(confirmationIndex) {
+      this.isConfirmationModalOpen = true;
+      this.confirmationIndex = confirmationIndex;
+    },
+    closeConfirmationModal() {
+      this.isConfirmationModalOpen = false;
+      this.confirmationIndex = null;
     },
   },
 };
