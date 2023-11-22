@@ -22,6 +22,7 @@ function openDatabase() {
         autoIncrement: true,
       });
 
+      // Создаем индекс для поиска по полю "title"
       notesStore.createIndex("title", "title", { unique: false });
     };
   });
@@ -56,6 +57,37 @@ export const getAllNotes = async () => {
 
     request.onsuccess = () => {
       resolve(request.result);
+    };
+
+    request.onerror = (event) => {
+      reject(event.target.error);
+    };
+  });
+};
+
+export const updateTaskCompleted = async (noteId, taskIndex, completed) => {
+  const db = await openDatabase();
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(["notes"], "readwrite");
+    const notesStore = transaction.objectStore("notes");
+
+    const request = notesStore.get(noteId);
+
+    request.onsuccess = (event) => {
+      const note = event.target.result;
+      if (note) {
+        note.tasks[taskIndex].completed = completed;
+
+        const updateRequest = notesStore.put(note);
+        updateRequest.onsuccess = () => {
+          resolve();
+        };
+        updateRequest.onerror = (updateEvent) => {
+          reject(updateEvent.target.error);
+        };
+      } else {
+        reject("Note not found");
+      }
     };
 
     request.onerror = (event) => {
